@@ -33,13 +33,15 @@ func (c *Client) MasterProcessingCenter(groupId int64, commandLine string) {
 		return
 	}
 	// get responce
+	var message string
+	if len(resp.StandardOutputError) > 0 || len(resp.Error) > 0 {
+		message = fmt.Sprintf("%v\n%v", resp.StandardOutputError, resp.Error)
+	} else {
+		message = resp.StandardOutput
+	}
 	sendStruct := APIStruct.SendGroupMsg{
-		GroupId: groupId,
-		Message: fmt.Sprintf(
-			"Output:\n%v\n-----\nError:\n%v",
-			resp.StandardOutput,
-			resp.StandardOutputError,
-		),
+		GroupId:    groupId,
+		Message:    message,
 		AutoEscape: false,
 	}
 	// construct the target struct
