@@ -40,7 +40,7 @@ func (c *Client) MasterProcessingCenter(groupId int64, commandLine string) {
 			resp.StandardOutput,
 			resp.StandardOutputError,
 		),
-		AutoEscape: true,
+		AutoEscape: false,
 	}
 	// construct the target struct
 	goCqhttpResp, err := c.Resources.SendRequestWithResponce(
