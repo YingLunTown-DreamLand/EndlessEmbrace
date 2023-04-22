@@ -73,6 +73,8 @@ func decodeToMessage(header Header, jsonDatas []byte) (interface{}, error) {
 		if err != nil {
 			return nil, fmt.Errorf("UnMarshal: %v", err)
 		}
+		new.Message = escapeCharacter(new.Message)
+		new.RawMessage = escapeCharacter(new.RawMessage)
 		return new, nil
 	default:
 		return decodeToMap(jsonDatas)
