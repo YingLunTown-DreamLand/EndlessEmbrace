@@ -2,6 +2,8 @@ package main
 
 import (
 	"EndlessEmbrace/ProcessCenter"
+	"EndlessEmbrace/RequestCenter"
+	"strconv"
 	"sync"
 
 	"github.com/pterm/pterm"
@@ -30,8 +32,17 @@ func (c *Client) ReadPacketAndProcess(
 		}
 		// unmarshal json datas to the golang struct
 		switch new := ans.(type) {
+		case RequestCenter.Responce:
+			requestID, err := strconv.ParseUint(new.ResponceId, 10, 32)
+			if err != nil {
+				pterm.Warning.Printf("ReadPacketAndProcess: %v\n")
+				break
+			}
+			c.Resources.WriteResponce(uint32(requestID), new)
 		case ProcessCenter.ClientStates:
 			c.ClientStates = &new
+		case ProcessCenter.GroupMessage:
+			go c.MasterProcessingCenter(new.GroupId, new.Message)
 		case map[string]interface{}:
 			pterm.Info.Printf("%#v\n", new)
 		}

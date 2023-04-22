@@ -2,6 +2,7 @@ package main
 
 import (
 	"EndlessEmbrace/ProcessCenter"
+	"EndlessEmbrace/RequestCenter"
 
 	"github.com/gorilla/websocket"
 )
@@ -11,6 +12,7 @@ type Client struct {
 	Conn         *websocket.Conn
 	ConnAns      *ConnectionReulst
 	ClientStates *ProcessCenter.ClientStates
+	Resources    *RequestCenter.Resources
 }
 
 // 此结构体用于描述客户端与 go-cqhttp 的连接结果。

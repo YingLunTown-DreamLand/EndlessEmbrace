@@ -1,6 +1,7 @@
 package main
 
 import (
+	"EndlessEmbrace/RequestCenter"
 	"fmt"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +18,8 @@ func NewClient(address string) (*Client, error) {
 	// 建立连接
 	newStruct := Client{}
 	newStruct.Conn = conn
+	newStruct.Resources = &RequestCenter.Resources{}
+	newStruct.Resources.InitStruct()
 	// 初始化结构体
 	err = newStruct.init()
 	if err != nil {

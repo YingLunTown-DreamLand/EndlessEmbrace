@@ -2,7 +2,6 @@ package main
 
 import (
 	"sync"
-	"time"
 
 	"github.com/pterm/pterm"
 )
@@ -18,8 +17,8 @@ func main() {
 	closeDown := sync.Mutex{}
 	go client.ReadPacketAndProcess(&closeDown)
 	// process messages
-	time.Sleep(5 * time.Second)
-	closeDown.Lock()
-	closeDown.Lock()
-	// test
+	waitGroup := sync.WaitGroup{}
+	waitGroup.Add(1)
+	waitGroup.Wait()
+	// set wait groups
 }
