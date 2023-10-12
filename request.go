@@ -1,9 +1,9 @@
 package main
 
 import (
-	"EndlessEmbrace/APIStruct"
-	"EndlessEmbrace/BotFunction"
-	"EndlessEmbrace/RequestCenter"
+	APIStruct "EndlessEmbrace/api_struct"
+	BotFunction "EndlessEmbrace/bot_function"
+	RequestCenter "EndlessEmbrace/request_center"
 	"fmt"
 
 	"github.com/pterm/pterm"

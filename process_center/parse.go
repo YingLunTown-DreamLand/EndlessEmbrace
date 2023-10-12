@@ -1,7 +1,7 @@
 package ProcessCenter
 
 import (
-	"EndlessEmbrace/RequestCenter"
+	RequestCenter "EndlessEmbrace/request_center"
 	"encoding/json"
 	"fmt"
 )

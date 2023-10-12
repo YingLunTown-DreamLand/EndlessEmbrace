@@ -1,7 +1,7 @@
 package main
 
 import (
-	"EndlessEmbrace/RequestCenter"
+	RequestCenter "EndlessEmbrace/request_center"
 	"fmt"
 
 	"github.com/gorilla/websocket"

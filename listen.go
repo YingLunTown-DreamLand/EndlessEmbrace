@@ -1,8 +1,8 @@
 package main
 
 import (
-	"EndlessEmbrace/ProcessCenter"
-	"EndlessEmbrace/RequestCenter"
+	ProcessCenter "EndlessEmbrace/process_center"
+	RequestCenter "EndlessEmbrace/request_center"
 	"strconv"
 	"sync"
 
