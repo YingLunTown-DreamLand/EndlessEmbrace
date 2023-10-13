@@ -75,7 +75,7 @@ func RepeatTiming(
 			resources,
 			triggerTime,
 			"[Auto Generated | INFO] Now I'm sleeping, have a good night!",
-			2956859612,
+			1279923655,
 		)
 		if err != nil {
 			pterm.Warning.Println(err)
