@@ -11,46 +11,78 @@ import (
 	"github.com/pterm/pterm"
 )
 
+func GenerateNewTime(layer string, randomSecondsRange int) time.Time {
+	ans, _ := time.ParseInLocation(
+		"2006-01-02 15:04:05",
+		fmt.Sprintf("%s %s", time.Now().Format("2006-01-02 15:04:05")[0:10], layer),
+		time.Local,
+	)
+	ans = ans.Add(time.Second * time.Duration(rand.Intn(randomSecondsRange)))
+	return ans
+}
+
+func SendPrivateMsg(
+	conn *websocket.Conn,
+	resources *RequestCenter.Resources,
+	message string,
+	userId []int64,
+) error {
+	for _, value := range userId {
+		resp, err := resources.SendRequestWithResponce(
+			conn,
+			RequestCenter.Request{
+				Action: APIStruct.SendPrivateMsgAction,
+				Params: APIStruct.SendPrivateMsg{
+					UserId:     value,
+					Message:    message,
+					AutoEscape: false,
+				},
+				RequestId: fmt.Sprintf("%d", resources.GetNewRequestId()),
+			},
+		)
+		if err != nil {
+			return fmt.Errorf("SendPrivateMsg: %v", err)
+		}
+		// send request with responce
+		pterm.Success.Printf("%#v\n", resp)
+		// output success information
+	}
+	// send messages in bulk
+	return nil
+	// return
+}
+
 func TimingMessage(
 	conn *websocket.Conn,
 	resources *RequestCenter.Resources,
 	triggeTime time.Time,
 	message string,
-	userId int64,
+	userId []int64,
 ) error {
-	if time.Now().After(triggeTime) {
-		triggeTime = triggeTime.Add(time.Hour * 24)
+	for {
+		nextBlock := time.Now().Add(time.Minute * (40 + time.Duration(rand.Intn(20))))
+		if triggeTime.After(nextBlock) {
+			err := SendPrivateMsg(conn, resources, "S2CHeartBeat", userId)
+			if err != nil {
+				return fmt.Errorf("TimingMessage: %v", err)
+			}
+			pterm.Info.Printf(
+				"The next heartbeat is at %s\n",
+				nextBlock.Format("2006-01-02 15:04:05"),
+			)
+			time.Sleep(time.Until(nextBlock))
+		} else {
+			pterm.Info.Printf("The routine will be executed in the next block\n")
+			time.Sleep(time.Until(triggeTime))
+			break
+		}
 	}
-	// adjust the time
-	pterm.Info.Printf(
-		"The plug-in routine is installed: Will trigger at %s\n",
-		triggeTime.Format("2006-01-02 15:04:05"),
-	)
-	// show when to send the message
-	time.Sleep(
-		time.Until(
-			triggeTime,
-		),
-	)
-	// waiting for
-	resp, err := resources.SendRequestWithResponce(
-		conn,
-		RequestCenter.Request{
-			Action: APIStruct.SendPrivateMsgAction,
-			Params: APIStruct.SendPrivateMsg{
-				UserId:     userId,
-				Message:    message,
-				AutoEscape: false,
-			},
-			RequestId: fmt.Sprintf("%d", resources.GetNewRequestId()),
-		},
-	)
+	// send heart beat message and waiting for
+	err := SendPrivateMsg(conn, resources, message, userId)
 	if err != nil {
 		return fmt.Errorf("TimingMessage: %v", err)
 	}
-	// send request with responce
-	pterm.Success.Printf("%#v\n", resp)
-	// output success information
+	// send message
 	return nil
 	// return
 }
@@ -60,22 +92,30 @@ func RepeatTiming(
 	resources *RequestCenter.Resources,
 ) {
 	for {
-		triggerTime, _ := time.ParseInLocation(
-			"2006-01-02 15:04:05",
-			fmt.Sprintf("%s 03:00:00", time.Now().Format("2006-01-02 15:04:05")[0:10]),
-			time.Local,
-		)
-		randMinutes := rand.Intn(90)
-		randSeconds := rand.Intn(59)
-		triggerTime = triggerTime.Add(time.Minute * time.Duration(randMinutes))
-		triggerTime = triggerTime.Add(time.Second * time.Duration(randSeconds))
+		triggerTime := GenerateNewTime("03:00:00", 5400)
+		heartBeatStartTime := GenerateNewTime("21:25:00", 900)
 		// spawn a time
+		if time.Now().After(triggerTime) {
+			triggerTime = triggerTime.Add(time.Hour * 24)
+		}
+		if heartBeatStartTime.After(triggerTime) {
+			heartBeatStartTime = heartBeatStartTime.Add(-time.Hour * 24)
+		}
+		// adjust the time
+		pterm.Info.Printf(
+			"The plug-in routine is installed:\n1. The first heartbeat will occur at %s\n2. The routine will trigger at %s\n",
+			heartBeatStartTime.Format("2006-01-02 15:04:05"),
+			triggerTime.Format("2006-01-02 15:04:05"),
+		)
+		// show when to send the message
+		time.Sleep(time.Until(heartBeatStartTime))
+		// wait for the heartbeat to start
 		err := TimingMessage(
 			conn,
 			resources,
 			triggerTime,
 			"[Auto Generated | INFO] Now I'm sleeping, have a good night!",
-			1279923655,
+			[]int64{1279923655, 2503170967},
 		)
 		if err != nil {
 			pterm.Warning.Println(err)
