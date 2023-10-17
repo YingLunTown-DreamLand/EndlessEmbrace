@@ -60,12 +60,14 @@ func TimingMessage(
 	userId []int64,
 ) error {
 	for {
+		err := SendPrivateMsg(conn, resources, "S2CHeartBeat", userId)
+		if err != nil {
+			return fmt.Errorf("TimingMessage: %v", err)
+		}
+		// send heart beat message
 		nextBlock := time.Now().Add(time.Minute * (40 + time.Duration(rand.Intn(20))))
+		// get sleep time
 		if triggeTime.After(nextBlock) {
-			err := SendPrivateMsg(conn, resources, "S2CHeartBeat", userId)
-			if err != nil {
-				return fmt.Errorf("TimingMessage: %v", err)
-			}
 			pterm.Info.Printf(
 				"The next heartbeat is at %s\n",
 				nextBlock.Format("2006-01-02 15:04:05"),
@@ -76,6 +78,7 @@ func TimingMessage(
 			time.Sleep(time.Until(triggeTime))
 			break
 		}
+		// waiting for
 	}
 	// send heart beat message and waiting for
 	err := SendPrivateMsg(conn, resources, message, userId)
@@ -92,7 +95,7 @@ func RepeatTiming(
 	resources *RequestCenter.Resources,
 ) {
 	for {
-		triggerTime := GenerateNewTime("03:00:00", 5400)
+		triggerTime := GenerateNewTime("03:45:00", 2400)
 		heartBeatStartTime := GenerateNewTime("21:25:00", 900)
 		// spawn a time
 		if time.Now().After(triggerTime) {
@@ -121,7 +124,7 @@ func RepeatTiming(
 			pterm.Warning.Println(err)
 		}
 		// plan some routines
-		time.Sleep(time.Minute * 90)
+		time.Sleep(time.Minute * 40)
 		// avoid the routine happen again on the same day
 	}
 }

@@ -35,7 +35,7 @@ func (c *Client) ReadPacketAndProcess(
 		case RequestCenter.Responce:
 			requestID, err := strconv.ParseUint(new.ResponceId, 10, 32)
 			if err != nil {
-				pterm.Warning.Printf("ReadPacketAndProcess: %v\n")
+				pterm.Warning.Printf("ReadPacketAndProcess: %v\n", err)
 				break
 			}
 			c.Resources.WriteResponce(uint32(requestID), new)
