@@ -50,7 +50,7 @@ func RunGoAndPythonCodeByWebAPI(
 	}
 	// get new post request
 	newRequest.Header.Add("Content-Type", "application/json")
-	newRequest.Header.Add("Authorization", "a917b67e-f68d-46b1-8b23-ff2513bf7065")
+	newRequest.Header.Add("Authorization", "Token a917b67e-f68d-46b1-8b23-ff2513bf7065")
 	// set headers
 	resp, err := http.DefaultClient.Do(newRequest)
 	if err != nil {
