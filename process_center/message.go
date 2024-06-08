@@ -5,12 +5,13 @@ type GroupMessage struct {
 	Anonymous   *Anonymous  `json:"anonymous"`    // 匿名信息, 如果不是匿名消息则为 null
 	Font        int         `json:"font"`         // 字体
 	GroupId     int64       `json:"group_id"`     // 群号
-	Message     string      `json:"message"`      // 消息内容
+	Message     interface{} `json:"message"`      // 消息内容
 	MessageId   int32       `json:"message_id"`   // 消息 ID
 	MessageSeq  int64       `json:"message_seq"`  // 起始消息序号，可通过 get_msg 获得
 	MessageType string      `json:"message_type"` // 消息类型
 	PostType    string      `json:"post_type"`    // 表示该上报的类型
 	RawMessage  string      `json:"raw_message"`  // CQ 码格式的消息
+	RealId      int64       `json:"real_id"`      // ... [未知字段，看起来与 MessageSeq 是一致的]
 	SelfId      int64       `json:"self_id"`      // 收到事件的机器人 QQ 号
 	SubType     string      `json:"sub_type"`     // 消息子类型(normal/anonymous/notice)
 	Time        int64       `json:"time"`         // 事件发生的时间戳

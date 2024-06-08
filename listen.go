@@ -42,7 +42,7 @@ func (c *Client) ReadPacketAndProcess(
 		case ProcessCenter.ClientStates:
 			c.ClientStates = &new
 		case ProcessCenter.GroupMessage:
-			go c.MasterProcessingCenter(new.GroupId, new.Message)
+			go c.MasterProcessingCenter(new.GroupId, new.RawMessage)
 		case map[string]interface{}:
 			pterm.Info.Printf("%#v\n", new)
 		}
