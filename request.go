@@ -85,10 +85,10 @@ func (c *Client) MasterProcessingCenter(
 				commandLine, groupId, sender, originMessage,
 			)
 			// print success message
+			return
+			// return
 		}
 		// match and delete unallow message
-		return
-		// return
 	}
 	// match unallow message
 	if message = process_uec_requests(commandLine); len(message) == 0 {
