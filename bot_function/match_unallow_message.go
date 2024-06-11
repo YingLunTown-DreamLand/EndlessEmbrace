@@ -23,10 +23,6 @@ var UnallowCQCodeList []ProcessCenter.Message = []ProcessCenter.Message{
 		Data: map[string]any{"qq": "2528622340"},
 		Type: "at",
 	},
-	{
-		Data: map[string]any{"qq": "3527679800"},
-		Type: "at",
-	},
 }
 
 // 下表用于放置多名群成员的 QQ 号。
@@ -68,21 +64,17 @@ func MatchUnallowMessage(
 		}
 	}
 	// match each message
-	match = false
-	func() {
-		for _, value := range originMessage {
-			for _, v := range UnallowCQCodeList {
-				if value.Type != v.Type {
-					continue
-				}
-				if reflect.DeepEqual(value.Data, v.Data) {
-					match = true
-					return
-				}
+	for _, value := range originMessage {
+		for _, v := range UnallowCQCodeList {
+			if value.Type != v.Type {
+				continue
+			}
+			if reflect.DeepEqual(value.Data, v.Data) {
+				return true
 			}
 		}
-	}()
+	}
 	// match CQ code
-	return match
+	return false
 	// return
 }
