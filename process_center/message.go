@@ -1,11 +1,17 @@
 package ProcessCenter
 
+// 描述消息内容中的单个元素
+type Message struct {
+	Data map[string]any `json:"data"`
+	Type string         `json:"type"`
+}
+
 // 群消息
 type GroupMessage struct {
 	Anonymous   *Anonymous  `json:"anonymous"`    // 匿名信息, 如果不是匿名消息则为 null
 	Font        int         `json:"font"`         // 字体
 	GroupId     int64       `json:"group_id"`     // 群号
-	Message     interface{} `json:"message"`      // 消息内容
+	Message     []Message   `json:"message"`      // 消息内容
 	MessageId   int32       `json:"message_id"`   // 消息 ID
 	MessageSeq  int64       `json:"message_seq"`  // 起始消息序号，可通过 get_msg 获得
 	MessageType string      `json:"message_type"` // 消息类型

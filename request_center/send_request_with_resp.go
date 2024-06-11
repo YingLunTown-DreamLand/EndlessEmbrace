@@ -7,6 +7,19 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// 向 go-cqhttp 发送请求但无视返回值
+func (r *Resources) SendRequest(
+	conn *websocket.Conn,
+	request Request,
+) error {
+	if err := conn.WriteJSON(request); err != nil {
+		return fmt.Errorf("SendRequest: %v", err)
+	}
+	// send packet
+	return nil
+	// return
+}
+
 // 向 go-cqhttp 发送请求并获取返回值
 func (r *Resources) SendRequestWithResponce(
 	conn *websocket.Conn,

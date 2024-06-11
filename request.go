@@ -3,6 +3,7 @@ package main
 import (
 	APIStruct "EndlessEmbrace/api_struct"
 	BotFunction "EndlessEmbrace/bot_function"
+	ProcessCenter "EndlessEmbrace/process_center"
 	RequestCenter "EndlessEmbrace/request_center"
 	"fmt"
 
@@ -54,9 +55,42 @@ func process_run_codes_requests(commandLine string) (res string) {
 	// return
 }
 
-func (c *Client) MasterProcessingCenter(groupId int64, commandLine string) {
+func (c *Client) MasterProcessingCenter(
+	groupId int64,
+	messageId int32,
+	sender ProcessCenter.GroupSender,
+	originMessage []ProcessCenter.Message,
+	commandLine string,
+) {
 	var message string
 	// prepare
+	if BotFunction.DeleteUnallowMsgIsEnabled {
+		if BotFunction.MatchUnallowMessage(groupId, sender, originMessage, commandLine) {
+			err := c.Resources.SendRequest(
+				c.Conn,
+				RequestCenter.Request{
+					Action:    APIStruct.DeleteMsg,
+					Params:    APIStruct.DeleteMessage{MessageId: messageId},
+					RequestId: "",
+				},
+			)
+			// delete target message
+			if err != nil {
+				pterm.Warning.Printf("MasterProcessingCenter: %v\n", err)
+				return
+			}
+			// error check
+			pterm.Success.Printf(
+				"Match unallow message %#v on QQ group %d which sent from %#v; originMessage = %#v\n",
+				commandLine, groupId, sender, originMessage,
+			)
+			// print success message
+		}
+		// match and delete unallow message
+		return
+		// return
+	}
+	// match unallow message
 	if message = process_uec_requests(commandLine); len(message) == 0 {
 		message = process_run_codes_requests(commandLine)
 		if len(message) == 0 {
