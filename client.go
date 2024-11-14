@@ -3,8 +3,10 @@ package main
 import (
 	RequestCenter "EndlessEmbrace/request_center"
 	"fmt"
+	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/pterm/pterm"
 )
 
 // 创建一个客户端并让它连接到 address 所指代的 go-cqhttp 服务器。
@@ -12,8 +14,16 @@ import (
 // 注：go-cqhttp 服务器是一个 websocket 服务器
 func NewClient(address string) (*Client, error) {
 	conn, _, err := websocket.DefaultDialer.Dial(address, nil)
-	if err != nil {
-		return &Client{}, fmt.Errorf("NewClient: %v", err)
+	// 重连机制
+	for err != nil {
+		conn, _, err = websocket.DefaultDialer.Dial(address, nil)
+		if err != nil {
+			pterm.Error.Println(err)
+			if conn != nil {
+				conn.Close()
+			}
+			time.Sleep(time.Second * 5)
+		}
 	}
 	// 建立连接
 	newStruct := Client{}
