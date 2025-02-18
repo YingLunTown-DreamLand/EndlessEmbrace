@@ -2,8 +2,6 @@ package main
 
 import (
 	bot "EndlessEmbrace"
-	"fmt"
-	"os"
 	"os/exec"
 	"sync"
 	"time"
@@ -13,39 +11,49 @@ import (
 )
 
 const (
-	BotQQID = "862713720"
+	BotQQID = "1492551697"
 )
 
-func restartNapCat() {
-	pterm.Info.Println("尝试自动重启 NapCat")
-
-	err := exec.Command("napcat", BotQQID, "restart").Run()
-	if err != nil {
-		pterm.Error.Println(fmt.Sprintf("重启出现问题: %v", err))
+func startNapCat() {
+	for {
+		pterm.Info.Println("尝试启动 NapCat")
+		err := exec.Command("napcat", "start", BotQQID).Run()
+		if err == nil {
+			pterm.Success.Println("NapCat 应该启动成功了，10 秒后将启动 Bot")
+			time.Sleep(time.Second * 10)
+			break
+		} else {
+			pterm.Error.Println("启动出现问题，将会重试")
+			time.Sleep(time.Second * 1)
+		}
 	}
-
-	pterm.Info.Println("10 秒后终止程序")
-	time.Sleep(time.Second * 10)
-	os.Exit(0)
 }
 
-func main() {
+func runner() {
+	waitGroup := sync.WaitGroup{}
+	waitGroup.Add(1)
+	// prepare
 	client, err := bot.NewClient("ws://127.0.0.1:8080")
 	if err != nil {
 		pterm.Error.Println(err)
-		restartNapCat()
+		return
 	}
 	pterm.Success.Printf("%#v\n", client.ConnAns)
 	// connect to the go-cqhttp server
 	closeDown := sync.Mutex{}
 	go func() {
 		client.ReadPacketAndProcess(&closeDown)
-		restartNapCat()
+		waitGroup.Done()
 	}()
 	go yorha_http_service.NewRouter(client).GinEngine.Run(":2018")
 	// process messages
-	waitGroup := sync.WaitGroup{}
-	waitGroup.Add(1)
 	waitGroup.Wait()
 	// set wait groups
+}
+
+func main() {
+	for {
+		startNapCat()
+		runner()
+	}
 }
