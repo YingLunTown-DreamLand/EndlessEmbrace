@@ -92,9 +92,11 @@ func (c *Client) MasterProcessingCenter(
 	}
 	// match unallow message
 	if message = process_uec_requests(commandLine); len(message) == 0 {
-		message = process_run_codes_requests(commandLine)
-		if len(message) == 0 {
-			return
+		if message = process_run_codes_requests(commandLine); len(message) == 0 {
+			_, message = BotFunction.ProcessYoRHaCommand(groupId, &sender, commandLine)
+			if len(message) == 0 {
+				return
+			}
 		}
 	}
 	// get message to send
