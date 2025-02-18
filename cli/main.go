@@ -1,13 +1,14 @@
 package main
 
 import (
+	bot "EndlessEmbrace"
 	"sync"
 
 	"github.com/pterm/pterm"
 )
 
 func main() {
-	client, err := NewClient("ws://127.0.0.1:8080")
+	client, err := bot.NewClient("ws://127.0.0.1:8080")
 	if err != nil {
 		pterm.Error.Println(err)
 		return

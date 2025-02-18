@@ -1,4 +1,4 @@
-package main
+package bot
 
 import (
 	RequestCenter "EndlessEmbrace/request_center"

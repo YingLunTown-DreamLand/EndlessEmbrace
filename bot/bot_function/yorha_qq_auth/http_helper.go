@@ -2,7 +2,6 @@ package yorha_qq_auth
 
 import (
 	yorha_defines "EndlessEmbrace/bot_function/yorha_qq_auth/defines"
-	yorha_rsa "EndlessEmbrace/depends/YoRHa/rsa"
 	"bytes"
 	"crypto/rsa"
 	"encoding/hex"
@@ -10,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	yorha_rsa "yorha/rsa"
 
 	"github.com/gin-gonic/gin"
 )

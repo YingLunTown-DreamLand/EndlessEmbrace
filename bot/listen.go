@@ -1,4 +1,4 @@
-package main
+package bot
 
 import (
 	ProcessCenter "EndlessEmbrace/process_center"

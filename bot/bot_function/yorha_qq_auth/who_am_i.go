@@ -2,10 +2,10 @@ package yorha_qq_auth
 
 import (
 	yorha_defines "EndlessEmbrace/bot_function/yorha_qq_auth/defines"
-	yorha_qq_auth_key "EndlessEmbrace/depends/YoRHa/qq_auth_key"
 	ProcessCenter "EndlessEmbrace/process_center"
 	"fmt"
 	"phoenixbuilder/fastbuilder/string_reader"
+	yorha_qq_auth_key "yorha/qq_auth_key"
 )
 
 func ProcessWhoAmI(sender *ProcessCenter.GroupSender, reader *string_reader.StringReader) (message string) {
