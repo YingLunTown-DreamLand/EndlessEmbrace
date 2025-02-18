@@ -69,7 +69,7 @@ func (c *Client) MasterProcessingCenter(
 			err := c.Resources.SendRequest(
 				c.Conn,
 				RequestCenter.Request{
-					Action:    APIStruct.DeleteMsg,
+					Action:    APIStruct.DeleteMsgAction,
 					Params:    APIStruct.DeleteMessage{MessageId: messageId},
 					RequestId: "",
 				},

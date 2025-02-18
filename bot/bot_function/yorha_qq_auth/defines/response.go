@@ -22,6 +22,8 @@ const (
 	ResponseTypeUserNotBanned
 	ResponseTypeServerNotFound
 	ResponseTypeUnknownPermissionLevel
+
+	ResponseTypeCQHTTPFailed = 255
 )
 
 // Both Verify Server and CQ HTTP Server
@@ -31,6 +33,7 @@ type ServerResponse struct {
 
 	// GetGroupMemberInfo
 	GroupMemberInfo ProcessCenter.GroupMemberInfo `json:"group_member_info,omitempty"`
+	FailedReason    string                        `json:"failed_reason"`
 	// UnbindEulogistUser, ForceUnbindEulogistUser
 	OriginAccountNameLower string `json:"origin_account_name_lower,omitempty"`
 	// Ban

@@ -5,4 +5,5 @@ use (
 	./cli
 	./depends/PhoenixBuilder
 	./depends/YoRHa
+	./yorha_http_service
 )
