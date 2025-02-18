@@ -7,12 +7,12 @@ import (
 	yorha_defines "EndlessEmbrace/bot_function/yorha_qq_auth/defines"
 	ProcessCenter "EndlessEmbrace/process_center"
 	RequestCenter "EndlessEmbrace/request_center"
+	"encoding/json"
 	"fmt"
 	"strings"
 	yorha_qq_auth_key "yorha/qq_auth_key"
 
 	"github.com/gin-gonic/gin"
-	"github.com/mitchellh/mapstructure"
 )
 
 // ...
@@ -64,7 +64,16 @@ func (r *Router) GetGroupMemberInfo(c *gin.Context) {
 		return
 	}
 
-	err = mapstructure.Decode(resp.Data, &groupMemberInfo)
+	temp, err := json.Marshal(resp.Data)
+	if err != nil {
+		yorha_qq_auth.WriteResponse(c, &yorha_qq_auth_key.QQAuthKey.PublicKey, yorha_defines.ServerResponse{
+			ResponseType: yorha_defines.ResponseTypeCQHTTPFailed,
+			FailedReason: fmt.Sprintf("GetGroupMemberInfo: %v", err),
+		})
+		return
+	}
+
+	err = json.Unmarshal(temp, &groupMemberInfo)
 	if err != nil {
 		yorha_qq_auth.WriteResponse(c, &yorha_qq_auth_key.QQAuthKey.PublicKey, yorha_defines.ServerResponse{
 			ResponseType: yorha_defines.ResponseTypeCQHTTPFailed,
