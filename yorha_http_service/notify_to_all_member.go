@@ -7,6 +7,7 @@ import (
 	yorha_defines "EndlessEmbrace/bot_function/yorha_qq_auth/defines"
 	RequestCenter "EndlessEmbrace/request_center"
 	"fmt"
+	"strings"
 	yorha_qq_auth_key "yorha/qq_auth_key"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,7 @@ func (r *Router) NotifyToAllMember(c *gin.Context) {
 		return
 	}
 
-	if resp.Status != "OK" {
+	if strings.ToLower(resp.Status) != "ok" {
 		if resp.Wording != nil {
 			yorha_qq_auth.WriteResponse(c, &yorha_qq_auth_key.QQAuthKey.PublicKey, yorha_defines.ServerResponse{
 				ResponseType: yorha_defines.ResponseTypeCQHTTPFailed,

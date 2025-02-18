@@ -47,7 +47,7 @@ func ProcessSetCouldAccessWithoutOP(sender *ProcessCenter.GroupSender, reader *s
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/set_could_access_without_op", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.SetCouldAccessWithoutOP{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
@@ -116,7 +116,7 @@ func ProcessUnsetCouldAccessWithoutOP(sender *ProcessCenter.GroupSender, reader 
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/set_could_access_without_op", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.SetCouldAccessWithoutOP{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,

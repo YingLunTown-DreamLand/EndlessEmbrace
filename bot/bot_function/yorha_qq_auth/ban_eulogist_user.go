@@ -33,7 +33,7 @@ func ProcessBanEulogistUser(sender *ProcessCenter.GroupSender, reader *string_re
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/ban_eulogist_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.BanEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
@@ -55,7 +55,7 @@ func ProcessBanEulogistUser(sender *ProcessCenter.GroupSender, reader *string_re
 		return "该 QQ 号没有绑定任何赞颂者账户"
 	case yorha_defines.ResponseTypeUserHasBanned:
 		return fmt.Sprintf(
-			"操作失败，因为对应的赞颂者正处于封禁状态 (将在 %s 时解封)",
+			"操作失败，因为对应的赞颂者账户正处于封禁状态 (将在 %s 时解封)",
 			time.Unix(resp.UnbanUnixTime, 0).Format("2006-01-02 15:04:05"),
 		)
 	case yorha_defines.ResponseTypeBanOperationSuccess:
@@ -84,7 +84,7 @@ func ProcessUnbanEulogistUser(sender *ProcessCenter.GroupSender, reader *string_
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/ban_eulogist_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.BanEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,

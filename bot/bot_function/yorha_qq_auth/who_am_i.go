@@ -11,7 +11,7 @@ import (
 func ProcessWhoAmI(sender *ProcessCenter.GroupSender, reader *string_reader.StringReader) (message string) {
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/who_am_i", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.WhoAmI{
 			QQID: sender.UserId,
 		},

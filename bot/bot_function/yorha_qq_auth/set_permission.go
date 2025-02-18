@@ -32,7 +32,7 @@ func ProcessSetPermission(sender *ProcessCenter.GroupSender, reader *string_read
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/set_permission", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.SetPermission{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,

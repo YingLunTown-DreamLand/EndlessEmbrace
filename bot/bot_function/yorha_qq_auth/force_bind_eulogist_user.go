@@ -26,13 +26,13 @@ func ProcessForceBindEulogistUser(sender *ProcessCenter.GroupSender, reader *str
 
 	reader.JumpSpace()
 	if reader.Next(true) != `"` {
-		return `用户名需要以 “"” 开头`
+		return `用户名需要以“"”开头`
 	}
 	accountNameLower := strings.ToLower(reader.ParseString())
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/force_bind_eulogist_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.ForceBindEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
@@ -80,7 +80,7 @@ func ProcessForceUnbindEulogistUser(sender *ProcessCenter.GroupSender, reader *s
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/force_bind_eulogist_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.ForceBindEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,

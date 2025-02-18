@@ -15,6 +15,7 @@ type Router struct {
 func NewRouter(botClient *bot.Client) *Router {
 	router := &Router{
 		GinEngine: gin.Default(),
+		BotClient: botClient,
 	}
 
 	qqAuthGroup := router.GinEngine.Group("/qq_auth")

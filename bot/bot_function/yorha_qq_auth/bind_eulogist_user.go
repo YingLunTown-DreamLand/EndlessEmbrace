@@ -12,19 +12,19 @@ import (
 func ProcessBindEulogistUser(sender *ProcessCenter.GroupSender, reader *string_reader.StringReader) (message string) {
 	defer func() {
 		if r := recover(); r != nil {
-			message = `用户名没有以 “"” 结尾`
+			message = `用户名没有以“"”结尾`
 		}
 	}()
 
 	reader.JumpSpace()
 	if reader.Next(true) != `"` {
-		return `用户名需要以 “"” 开头`
+		return `用户名需要以“"”开头`
 	}
 	accountNameLower := strings.ToLower(reader.ParseString())
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/bind_eulogist_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.BindEulogistUser{
 			OperationType:    yorha_defines.OperationTypeBindEulogistUser,
 			QQID:             sender.UserId,
@@ -52,7 +52,7 @@ func ProcessBindEulogistUser(sender *ProcessCenter.GroupSender, reader *string_r
 func ProcessUnbindEulogistUser(sender *ProcessCenter.GroupSender, reader *string_reader.StringReader) (message string) {
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/bind_eulogist_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.BindEulogistUser{
 			OperationType: yorha_defines.OperationTypeUnbindEulogistUser,
 			QQID:          sender.UserId,

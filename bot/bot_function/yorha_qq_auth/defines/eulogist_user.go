@@ -120,7 +120,7 @@ func (u User) String() string {
 		resultString += "	用户已绑定的租赁服信息如下: \n"
 		for _, value := range u.ServerCouldAccess {
 			resultString += fmt.Sprintf(
-				"		租赁服号: %s | 卡槽过期时间: %s | 是否可以无 OP 访问: %s",
+				"		租赁服号: %s | 卡槽过期时间: %s | 是否可以无 OP 访问: %s\n",
 				u.ToSafeRentalServerCode(value.ServerCode),
 				time.Unix(value.ExpireUnixTime, 0).Format("2006-01-02 15:04:05"),
 				u.BoolString(value.CouldAccessWithoutOP),

@@ -45,7 +45,7 @@ func UnmarshalClientRequest[T any](body io.ReadCloser, key *rsa.PrivateKey) (res
 }
 
 // ...
-func PostJSON[T any](url string, key *rsa.PublicKey, object any) (result T, err error) {
+func PostJSON[T any](url string, key *rsa.PrivateKey, object any) (result T, err error) {
 	// marshal body
 	originBody, err := json.Marshal(object)
 	if err != nil {
@@ -53,7 +53,7 @@ func PostJSON[T any](url string, key *rsa.PublicKey, object any) (result T, err 
 		return
 	}
 	// encrypt and do hex
-	encryptedBody, err := yorha_rsa.EncryptPKCS1v15(key, originBody)
+	encryptedBody, err := yorha_rsa.EncryptPKCS1v15(&key.PublicKey, originBody)
 	if err != nil {
 		err = fmt.Errorf("PostJSON: %v", err)
 		return
@@ -72,8 +72,20 @@ func PostJSON[T any](url string, key *rsa.PublicKey, object any) (result T, err 
 		err = fmt.Errorf("PostJSON: %v", err)
 		return
 	}
+	// do hex string to bytes
+	encryptedRespBodyBytes, err := hex.DecodeString(string(respBodyBytes))
+	if err != nil {
+		err = fmt.Errorf("PostJSON: %v", err)
+		return
+	}
+	// decrypt resp body
+	respBody, err := yorha_rsa.DecryptPKCS1v15(key, encryptedRespBodyBytes)
+	if err != nil {
+		err = fmt.Errorf("PostJSON: %v", err)
+		return
+	}
 	// unmarshal resp body
-	err = json.Unmarshal(respBodyBytes, &result)
+	err = json.Unmarshal(respBody, &result)
 	if err != nil {
 		err = fmt.Errorf("PostJSON: %v", err)
 		return
@@ -86,5 +98,5 @@ func PostJSON[T any](url string, key *rsa.PublicKey, object any) (result T, err 
 func WriteResponse(c *gin.Context, key *rsa.PublicKey, response yorha_defines.ServerResponse) {
 	packetBytes, _ := json.Marshal(response)
 	encryptedBody, _ := yorha_rsa.EncryptPKCS1v15(key, packetBytes)
-	c.Writer.Write([]byte(encryptedBody))
+	c.Writer.Write([]byte(hex.EncodeToString(encryptedBody)))
 }

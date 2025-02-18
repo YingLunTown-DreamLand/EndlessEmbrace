@@ -19,13 +19,13 @@ func ProcessSearchUserByName(sender *ProcessCenter.GroupSender, reader *string_r
 
 	reader.JumpSpace()
 	if reader.Next(true) != `"` {
-		return `用户名需要以 “"” 开头`
+		return `用户名需要以“"”开头`
 	}
 	accountNameLower := strings.ToLower(reader.ParseString())
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/search_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.SearchUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
@@ -67,7 +67,7 @@ func ProcessSearchUserByQQID(sender *ProcessCenter.GroupSender, reader *string_r
 
 	resp, err := PostJSON[yorha_defines.ServerResponse](
 		fmt.Sprintf("%s/qq_auth/search_user", YoRHaVerifyServerIP),
-		&yorha_qq_auth_key.QQAuthKey.PublicKey,
+		yorha_qq_auth_key.QQAuthKey,
 		yorha_defines.SearchUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,

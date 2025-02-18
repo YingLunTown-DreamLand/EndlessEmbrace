@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	EulogistGroupID = 194838530
+	EulogistGroupID = 644154294
 )
 
 func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, commandLine string) (
