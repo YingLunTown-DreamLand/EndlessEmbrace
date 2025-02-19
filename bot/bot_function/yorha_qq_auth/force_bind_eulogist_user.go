@@ -54,6 +54,8 @@ func ProcessForceBindEulogistUser(sender *ProcessCenter.GroupSender, reader *str
 		return "无效请求 (这看起来是个 BUG | 多次重试如果无效请联系群主处理)"
 	case yorha_defines.ResponseTypeUserNotFound:
 		return "没有找到指定的赞颂者账户"
+	case yorha_defines.ResponseTypeUserHasBinded:
+		return "该赞颂者账户已经绑定了 QQ 号，要先强制绑定需要将其强制解绑"
 	case yorha_defines.ResponseTypeForceBindOperationSuccess:
 		return fmt.Sprintf(
 			"已成功将账户 %#v 和 QQ 号 %d 绑定",
