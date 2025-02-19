@@ -118,16 +118,19 @@ func (u User) String() string {
 
 	if len(u.ServerCouldAccess) > 0 {
 		resultString += "	用户已绑定的租赁服信息如下: \n"
-		for _, value := range u.ServerCouldAccess {
+		for index, value := range u.ServerCouldAccess {
 			resultString += fmt.Sprintf(
-				"		租赁服号: %s | 卡槽过期时间: %s | 是否可以无 OP 访问: %s\n",
+				"		租赁服号: %s | 卡槽过期时间: %s | 是否可以无 OP 访问: %s",
 				u.ToSafeRentalServerCode(value.ServerCode),
 				time.Unix(value.ExpireUnixTime, 0).Format("2006-01-02 15:04:05"),
 				u.BoolString(value.CouldAccessWithoutOP),
 			)
+			if index != len(u.ServerCouldAccess)-1 {
+				resultString += "\n"
+			}
 		}
 	} else {
-		resultString += "	用户已绑定的租赁服信息如下: (没有绑定任何租赁服)\n"
+		resultString += "	用户已绑定的租赁服信息如下: (没有绑定任何租赁服)"
 	}
 
 	return resultString
