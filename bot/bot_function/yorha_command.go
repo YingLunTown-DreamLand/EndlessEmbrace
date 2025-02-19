@@ -11,6 +11,34 @@ const (
 	EulogistGroupID = 644154294
 )
 
+const HelpCommandConstText = `可用命令如下。
+	- 账户绑定 -
+		/bind <userName: string> | 将 userName 指代的赞颂者用户绑定到当前 QQ 号
+		/unbind | 解绑任何绑定到当前 QQ 号的赞颂者账户
+
+	- 账户信息 -
+		/whoami | 查询个人赞颂者账户信息
+
+	- 管理员命令(仅限群管理员可用)
+		- 账户封禁 -
+			/ban <qqID: int64> <durationOfSeconds: int32> | 将 qqID 绑定的赞颂者用户封禁 durationOfSeconds 秒
+			/unban <qqID: int64> | 解除 qqID 绑定的赞颂者用户的封禁状态
+
+		- 账户绑定 -
+			/force_bind <qqID: int64> <userName: string> | 将名为 userName 的赞颂者账户强制绑定到 qqID 上
+			/force_unbind <qqID: int64> | 将任何绑定到 qqID 的赞颂者账户从该 QQ 号上解绑
+
+		- 无权限进服 -
+			/op <qqID: int64> [rentalServerNumber: string] | 允许 qqID 绑定的赞颂者账户无权限进入 rentalServerNumber 所指代的租赁服。不填租赁服号则默认该用户可无权限进入任意租赁服
+			/deop <qqID: int64> [rentalServerNumber: string] | 使 qqID 绑定的赞颂者账户不再能无权限进入 rentalServerNumber 所指代的租赁服。不填租赁服号则默认该用户无法无权限进入除特别指定的任何租赁服
+
+		- 管理用户权限 -
+			/set_permission <qqID: int64> <permissionLevel: uint8> | 将 qqID 绑定的赞颂者账户的权限等级设为 permissionLevel (0-受限用户, 1-普通用户, 2-受信用户, 3-管理员, 4-系统)
+
+		- 查询用户信息 -
+			/search_user_by_name <userName: string> | 查询名为 userName 的赞颂者用户的信息
+			/search_user_by_qqid <qqID: int64> | 查询 qqID 所绑定的赞颂者用户的信息`
+
 func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, commandLine string) (
 	shouldSendMessage bool,
 	message string,
@@ -44,28 +72,7 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 	case "whoami":
 		return true, yorha_qq_auth.ProcessWhoAmI(sender, reader)
 	case "help":
-		return true, "" +
-			"可用命令如下。\n" +
-			"- 账户绑定 - \n" +
-			"	/bind <userName: string> | 将 userName 指代的赞颂者用户绑定到当前 QQ 号\n" +
-			"	/unbind | 解绑任何绑定到当前 QQ 号的赞颂者账户\n" +
-			"- 账户信息 -\n" +
-			"	/whoami | 查询个人赞颂者账户信息\n" +
-			"- 管理员命令(仅限群管理员可用) -\n" +
-			"	- 账户封禁 -\n" +
-			"		/ban <qqID: int64> <durationOfSeconds: int32> | 将 qqID 绑定的赞颂者用户封禁 durationOfSeconds 秒\n" +
-			"		/unban <qqID: int64> | 解除 qqID 绑定的赞颂者用户的封禁状态\n" +
-			"	- 账户绑定 -\n" +
-			"		/force_bind <qqID: int64> <userName: string> | 将名为 userName 的赞颂者账户强制绑定到 qqID 上\n" +
-			"		/force_unbind <qqID: int64> | 将任何绑定到 qqID 的赞颂者账户从该 QQ 号上解绑\n" +
-			"	- 无权限进服 -\n" +
-			"		/op <qqID: int64> [rentalServerNumber: string] | 允许 qqID 绑定的赞颂者账户无权限进入 rentalServerNumber 所指代的租赁服。不填租赁服号则默认该用户可无权限进入任意租赁服\n" +
-			"		/deop <qqID: int64> [rentalServerNumber: string] | 使 qqID 绑定的赞颂者账户不再能无权限进入 rentalServerNumber 所指代的租赁服。不填租赁服号则默认该用户无法无权限进入除特别指定的任何租赁服\n" +
-			"	- 管理用户权限 -\n" +
-			"		/set_permission <qqID: int64> <permissionLevel: uint8> | 将 qqID 绑定的赞颂者账户的权限等级设为 permissionLevel (0-受限用户, 1-普通用户, 2-受信用户, 3-管理员, 4-系统)\n" +
-			"	- 查询用户信息 -\n" +
-			"		/search_user_by_name <userName: string> | 查询名为 userName 的赞颂者用户的信息\n" +
-			"		/search_user_by_qqid <qqID: int64> | 查询 qqID 所绑定的赞颂者用户的信息"
+		return true, HelpCommandConstText
 	}
 
 	switch sender.Role {
