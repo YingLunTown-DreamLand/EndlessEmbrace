@@ -51,7 +51,7 @@ func ProcessSetCouldAccessWithoutOP(sender *ProcessCenter.GroupSender, reader *s
 		yorha_defines.SetCouldAccessWithoutOP{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			OperationType:      yorha_defines.OperationTypeSetServerCouldAccessWithoutOP,
 			QQID:               qqID,
@@ -120,7 +120,7 @@ func ProcessUnsetCouldAccessWithoutOP(sender *ProcessCenter.GroupSender, reader 
 		yorha_defines.SetCouldAccessWithoutOP{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			OperationType:      yorha_defines.OperationTypeUnsetServerCouldAccessWithoutOP,
 			QQID:               qqID,

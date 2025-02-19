@@ -36,7 +36,7 @@ func ProcessSetPermission(sender *ProcessCenter.GroupSender, reader *string_read
 		yorha_defines.SetPermission{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			QQID:       qqID,
 			Permission: uint8(permissionLevel),

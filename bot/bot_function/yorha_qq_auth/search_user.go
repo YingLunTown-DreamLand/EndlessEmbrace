@@ -29,7 +29,7 @@ func ProcessSearchUserByName(sender *ProcessCenter.GroupSender, reader *string_r
 		yorha_defines.SearchUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			OperationType:    yorha_defines.OperationTypeSearchUserByName,
 			AccountNameLower: accountNameLower,
@@ -71,7 +71,7 @@ func ProcessSearchUserByQQID(sender *ProcessCenter.GroupSender, reader *string_r
 		yorha_defines.SearchUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			OperationType: yorha_defines.OperationTypeSearchUserByQQID,
 			QQID:          qqID,

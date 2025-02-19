@@ -36,7 +36,7 @@ func ProcessForceBindEulogistUser(sender *ProcessCenter.GroupSender, reader *str
 		yorha_defines.ForceBindEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			BindEulogistUser: yorha_defines.BindEulogistUser{
 				OperationType:    yorha_defines.OperationTypeForceBindEulogistUser,
@@ -84,7 +84,7 @@ func ProcessForceUnbindEulogistUser(sender *ProcessCenter.GroupSender, reader *s
 		yorha_defines.ForceBindEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			BindEulogistUser: yorha_defines.BindEulogistUser{
 				OperationType: yorha_defines.OperationTypeForceUnbindEulogistUser,

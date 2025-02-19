@@ -37,7 +37,7 @@ func ProcessBanEulogistUser(sender *ProcessCenter.GroupSender, reader *string_re
 		yorha_defines.BanEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			OperationType: yorha_defines.OperationTypeBanEulogistUser,
 			QQID:          qqID,
@@ -88,7 +88,7 @@ func ProcessUnbanEulogistUser(sender *ProcessCenter.GroupSender, reader *string_
 		yorha_defines.BanEulogistUser{
 			AdminGeneralFields: yorha_defines.AdminGeneralFields{
 				AdminQQID:     sender.UserId,
-				AdminUserName: sender.Card,
+				AdminUserName: sender.SenderName(),
 			},
 			OperationType: yorha_defines.OperationTypeUnbanEulogistUser,
 			QQID:          qqID,

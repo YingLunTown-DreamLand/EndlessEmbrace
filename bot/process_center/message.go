@@ -44,3 +44,14 @@ type GroupSender struct {
 	Title    string `json:"title"`    // 专属头衔
 	UserId   int64  `json:"user_id"`  // 发送者 QQ 号
 }
+
+// SenderName 返回 g 即 GroupSender
+// 的名称。
+// 优先采用其群名片，如果群名片为空，
+// 则将会采用其 QQ 昵称
+func (g GroupSender) SenderName() string {
+	if len(g.Card) > 0 {
+		return g.Card
+	}
+	return g.Nickname
+}
