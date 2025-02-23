@@ -19,7 +19,7 @@ const HelpCommandConstText = `可用命令如下。
 	- 账户信息 -
 		/whoami | 查询个人赞颂者账户信息
 
-	- 管理员命令(仅限群管理员可用)
+	- 管理员命令(仅限群管理员可用) -
 		- 账户封禁 -
 			/ban <qqID: int64> <durationOfSeconds: int32> | 将 qqID 绑定的赞颂者用户封禁 durationOfSeconds 秒
 			/unban <qqID: int64> | 解除 qqID 绑定的赞颂者用户的封禁状态

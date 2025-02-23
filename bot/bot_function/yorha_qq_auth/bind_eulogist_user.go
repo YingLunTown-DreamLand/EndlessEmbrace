@@ -42,6 +42,8 @@ func ProcessBindEulogistUser(sender *ProcessCenter.GroupSender, reader *string_r
 		return "指定的赞颂者用户没有找到"
 	case yorha_defines.ResponseTypeUserHasBinded:
 		return "指定的赞颂者用户已经绑定了 QQ 号"
+	case yorha_defines.ResponseTypeUserHasBanned:
+		return "目标赞颂者用户已被封禁，任何绑定(解绑)操作都是无效的"
 	case yorha_defines.ResponseTypeBindOperationSuccess:
 		return fmt.Sprintf("已成功将账号 %#v 与您的 QQ 号进行绑定", accountNameLower)
 	default:
@@ -67,6 +69,8 @@ func ProcessUnbindEulogistUser(sender *ProcessCenter.GroupSender, reader *string
 		return "无效请求 (这看起来是个 BUG | 多次重试如果无效请联系群主处理)"
 	case yorha_defines.ResponseTypeUserNotBinded:
 		return "您的 QQ 号没有绑定任何赞颂者账户"
+	case yorha_defines.ResponseTypeUserHasBanned:
+		return "目标赞颂者用户已被封禁，任何绑定(解绑)操作都是无效的"
 	case yorha_defines.ResponseTypeBindOperationSuccess:
 		return fmt.Sprintf("您的 QQ 号已与原赞颂者账户 %#v 解绑", resp.OriginAccountNameLower)
 	default:
