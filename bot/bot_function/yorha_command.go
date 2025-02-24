@@ -86,6 +86,7 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 		for _, value := range ConstSpecificAdmin {
 			if value == sender.UserId {
 				requesterIsAdmin = true
+				break
 			}
 		}
 		if !requesterIsAdmin {
