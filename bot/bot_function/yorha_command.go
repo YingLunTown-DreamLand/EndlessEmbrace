@@ -11,6 +11,10 @@ const (
 	EulogistGroupID = 644154294
 )
 
+var ConstSpecificAdmin []int64 = []int64{
+	862713720,
+}
+
 const HelpCommandConstText = `可用命令如下。
 	- 账户绑定 -
 		/bind <userName: string> | 将 userName 指代的赞颂者用户绑定到当前 QQ 号
@@ -44,6 +48,7 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 	message string,
 ) {
 	var commandName string = ""
+	var requesterIsAdmin bool = false
 	reader := string_reader.NewStringReader(&commandLine)
 
 	if groupID != EulogistGroupID {
@@ -78,7 +83,14 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 	switch sender.Role {
 	case "owner", "admin":
 	default:
-		return true, "未知的命令或您权限不足"
+		for _, value := range ConstSpecificAdmin {
+			if value == sender.UserId {
+				requesterIsAdmin = true
+			}
+		}
+		if !requesterIsAdmin {
+			return true, "未知的命令或您权限不足"
+		}
 	}
 
 	switch commandName {
