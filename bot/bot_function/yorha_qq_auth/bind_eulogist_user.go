@@ -42,6 +42,8 @@ func ProcessBindEulogistUser(sender *ProcessCenter.GroupSender, reader *string_r
 		return "指定的赞颂者用户没有找到"
 	case yorha_defines.ResponseTypeUserHasBinded:
 		return "指定的赞颂者用户已经绑定了 QQ 号"
+	case yorha_defines.ResponseTypeQQHasBinded:
+		return "当前 QQ 号已经绑定了赞颂者账户"
 	case yorha_defines.ResponseTypeUserHasBanned:
 		return "目标赞颂者用户已被封禁，任何绑定(解绑)操作都是无效的"
 	case yorha_defines.ResponseTypeBindOperationSuccess:

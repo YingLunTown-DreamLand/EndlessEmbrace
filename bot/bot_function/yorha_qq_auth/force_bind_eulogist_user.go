@@ -56,6 +56,8 @@ func ProcessForceBindEulogistUser(sender *ProcessCenter.GroupSender, reader *str
 		return "没有找到指定的赞颂者账户"
 	case yorha_defines.ResponseTypeUserHasBinded:
 		return "该赞颂者账户已经绑定了 QQ 号，要先强制绑定需要将其强制解绑"
+	case yorha_defines.ResponseTypeQQHasBinded:
+		return "指定的 QQ 号已经绑定了赞颂者账户，要先强制绑定需要将其强制解绑"
 	case yorha_defines.ResponseTypeForceBindOperationSuccess:
 		return fmt.Sprintf(
 			"已成功将账户 %#v 和 QQ 号 %d 绑定",

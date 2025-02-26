@@ -17,6 +17,7 @@ const (
 	ResponseTypeInvalidRequest
 	ResponseTypeUserNotFound
 	ResponseTypeUserHasBinded
+	ResponseTypeQQHasBinded
 	ResponseTypeUserNotBinded
 	ResponseTypeUserHasBanned
 	ResponseTypeUserNotBanned
