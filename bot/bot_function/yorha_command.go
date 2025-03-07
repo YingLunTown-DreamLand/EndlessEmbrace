@@ -60,6 +60,7 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 		return false, ""
 	}
 
+	reader.JumpSpace()
 	for {
 		token := reader.Next(true)
 		if token == "" || token == " " || token == "\n" || token == "\r" {

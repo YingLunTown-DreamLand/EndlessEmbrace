@@ -55,6 +55,30 @@ func process_run_codes_requests(commandLine string) (res string) {
 	// return
 }
 
+func (c *Client) SendMessageFastly(groupId int64, message string, allowCQ bool) {
+	sendStruct := APIStruct.SendGroupMsg{
+		GroupId:    groupId,
+		Message:    message,
+		AutoEscape: !allowCQ,
+	}
+	// construct the target struct
+	resp, err := c.Resources.SendRequestWithResponce(
+		c.Conn,
+		RequestCenter.Request{
+			Action:    APIStruct.SendGroupMsgAction,
+			Params:    sendStruct,
+			RequestId: fmt.Sprintf("%d", c.Resources.GetNewRequestId()),
+		},
+	)
+	if err != nil {
+		pterm.Warning.Printf("SendMessageFastly: %v\n", err)
+		return
+	}
+	// send request with responce
+	pterm.Success.Printf("%#v\n", resp)
+	// output success information
+}
+
 func (c *Client) MasterProcessingCenter(
 	groupId int64,
 	messageId int32,
@@ -91,34 +115,21 @@ func (c *Client) MasterProcessingCenter(
 		// match and delete unallow message
 	}
 	// match unallow message
-	if message = process_uec_requests(commandLine); len(message) == 0 {
-		if message = process_run_codes_requests(commandLine); len(message) == 0 {
-			_, message = BotFunction.ProcessYoRHaCommand(groupId, &sender, commandLine)
-			if len(message) == 0 {
-				return
-			}
-		}
-	}
-	// get message to send
-	sendStruct := APIStruct.SendGroupMsg{
-		GroupId:    groupId,
-		Message:    message,
-		AutoEscape: false,
-	}
-	// construct the target struct
-	resp, err := c.Resources.SendRequestWithResponce(
-		c.Conn,
-		RequestCenter.Request{
-			Action:    APIStruct.SendGroupMsgAction,
-			Params:    sendStruct,
-			RequestId: fmt.Sprintf("%d", c.Resources.GetNewRequestId()),
-		},
-	)
-	if err != nil {
-		pterm.Warning.Printf("MasterProcessingCenter: %v\n", err)
+	if message = process_uec_requests(commandLine); len(message) != 0 {
+		c.SendMessageFastly(groupId, message, false)
 		return
 	}
-	// send request with responce
-	pterm.Success.Printf("%#v\n", resp)
-	// output success information
+	if _, message = BotFunction.ProcessPlayMusic(commandLine); len(message) != 0 {
+		c.SendMessageFastly(groupId, message, true)
+		return
+	}
+	if message = process_run_codes_requests(commandLine); len(message) != 0 {
+		c.SendMessageFastly(groupId, message, false)
+		return
+	}
+	if _, message = BotFunction.ProcessYoRHaCommand(groupId, &sender, commandLine); len(message) != 0 {
+		c.SendMessageFastly(groupId, message, false)
+		return
+	}
+	// bot command running
 }
