@@ -4,6 +4,7 @@ import (
 	"EndlessEmbrace/bot_function/yorha_qq_auth"
 	ProcessCenter "EndlessEmbrace/process_center"
 	"phoenixbuilder/fastbuilder/string_reader"
+	"slices"
 	"strings"
 )
 
@@ -81,14 +82,11 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 		return true, HelpCommandConstText
 	}
 
-	switch sender.Role {
+	switch strings.ToLower(sender.Role) {
 	case "owner", "admin":
 	default:
-		for _, value := range ConstSpecificAdmin {
-			if value == sender.UserId {
-				requesterIsAdmin = true
-				break
-			}
+		if slices.Contains(ConstSpecificAdmin, sender.UserId) {
+			requesterIsAdmin = true
 		}
 		if !requesterIsAdmin {
 			return true, "未知的命令或您权限不足"

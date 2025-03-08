@@ -6,6 +6,7 @@ import (
 	ProcessCenter "EndlessEmbrace/process_center"
 	RequestCenter "EndlessEmbrace/request_center"
 	"fmt"
+	"strings"
 
 	"github.com/pterm/pterm"
 )
@@ -21,10 +22,18 @@ func process_uec_requests(commandLine string) (res string) {
 	return
 }
 
-func process_run_codes_requests(commandLine string) (res string) {
+func process_run_codes_requests(sender *ProcessCenter.GroupSender, commandLine string) (res string) {
 	var language string = ""
 	var content string = ""
 	// init values
+	switch strings.ToLower(sender.Role) {
+	case "owner", "admin":
+	default:
+		if sender.UserId != 3527679800 && sender.UserId != 862713720 {
+			return ""
+		}
+	}
+	// pre check
 	if len(commandLine) < 7 {
 		return
 	}
@@ -123,7 +132,7 @@ func (c *Client) MasterProcessingCenter(
 		c.SendMessageFastly(groupId, message, true)
 		return
 	}
-	if message = process_run_codes_requests(commandLine); len(message) != 0 {
+	if message = process_run_codes_requests(&sender, commandLine); len(message) != 0 {
 		c.SendMessageFastly(groupId, message, false)
 		return
 	}

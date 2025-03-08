@@ -9,8 +9,9 @@ import (
 // 描述赞颂者用户权限等级的常量
 const (
 	UserPermissionDefault uint8 = iota
-	UserPermissionDeveloper
-	UserPermissionAgent
+	UserPermissionNormal
+	UserPermissionLegacyTursted
+	UserPermissionTursted
 	UserPermissionAdmin
 	UserPermissionSystem
 )
@@ -65,10 +66,12 @@ func (u User) PermissionString() string {
 	switch u.UserPermission {
 	case UserPermissionDefault:
 		return "受限用户"
-	case UserPermissionDeveloper:
+	case UserPermissionNormal:
 		return "普通用户"
-	case UserPermissionAgent:
-		return "受信任用户"
+	case UserPermissionLegacyTursted:
+		return "受信任用户 (旧时代)"
+	case UserPermissionTursted:
+		return "受信任用户 (诗人)"
 	case UserPermissionAdmin:
 		return "系统管理员"
 	case UserPermissionSystem:
