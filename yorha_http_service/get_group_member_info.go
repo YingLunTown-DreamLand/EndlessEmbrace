@@ -34,7 +34,7 @@ func (r *Router) GetGroupMemberInfo(c *gin.Context) {
 		RequestCenter.Request{
 			Action: APIStruct.GetGroupMemberInfoAction,
 			Params: APIStruct.GetGroupMemberInfo{
-				GroupId: BotFunction.EulogistGroupID,
+				GroupId: BotFunction.CBerGroupID,
 				UserID:  pk.QQID,
 				NoCache: true,
 			},

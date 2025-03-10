@@ -9,10 +9,11 @@ import (
 )
 
 const (
-	EulogistGroupID = 644154294
+	CBerGroupID = 902923525
 )
 
 var ConstSpecificAdmin []int64 = []int64{
+	3527679800,
 	862713720,
 }
 
@@ -52,7 +53,7 @@ func ProcessYoRHaCommand(groupID int64, sender *ProcessCenter.GroupSender, comma
 	var requesterIsAdmin bool = false
 	reader := string_reader.NewStringReader(&commandLine)
 
-	if groupID != EulogistGroupID {
+	if groupID != CBerGroupID {
 		return false, ""
 	}
 

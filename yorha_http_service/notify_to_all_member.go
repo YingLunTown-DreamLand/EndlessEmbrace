@@ -30,7 +30,7 @@ func (r *Router) NotifyToAllMember(c *gin.Context) {
 		RequestCenter.Request{
 			Action: APIStruct.SendGroupMsgAction,
 			Params: APIStruct.SendGroupMsg{
-				GroupId:    BotFunction.EulogistGroupID,
+				GroupId:    BotFunction.CBerGroupID,
 				Message:    pk.Message,
 				AutoEscape: true,
 			},
