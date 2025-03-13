@@ -98,7 +98,7 @@ func (b *Bucket) stillAlive() bool {
 	}
 
 	err := b.attachBucket(
-		"StillAlive",
+		"stillAlive",
 		func(b *bbolt.Bucket) error {
 			return nil
 		},
