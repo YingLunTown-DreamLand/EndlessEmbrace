@@ -39,7 +39,12 @@ func (b *Bucket) attachBucket(callerName string, function func(*bbolt.Bucket) er
 		if len(b.path) == 1 {
 			return fmt.Errorf("%s: attachBucket: Invalid operation (Try to access root as bucket)", callerName)
 		}
+
 		bucket := tx.Bucket(b.path[1])
+		if bucket == nil {
+			return fmt.Errorf("%s: attachBucket: Target bucket (path=%s) is not reachable", callerName, b.PathString())
+		}
+
 		for i := 2; i < len(b.path); i++ {
 			bucket = bucket.Bucket(b.path[i])
 			if bucket == nil {
