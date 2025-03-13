@@ -3,6 +3,7 @@ go 1.23
 use (
 	./bot
 	./cli
+	./database
 	./depends/PhoenixBuilder
 	./depends/YoRHa
 	./yorha_http_service
