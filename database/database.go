@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"sync"
 
 	"go.etcd.io/bbolt"
 )
@@ -25,6 +26,7 @@ func OpenOrCreateDatabase(path string) (
 		return nil, fmt.Errorf("OpenOrCreateDatabase: %v", err)
 	}
 	return &Bucket{
+		locker:     new(sync.RWMutex),
 		db:         &db,
 		path:       [][]byte{[]byte("root")},
 		permission: BucketPermissionReadOnly | BucketPermissionWriteOnly | BucketPermissionCloseDatabase,

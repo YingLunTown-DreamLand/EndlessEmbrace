@@ -12,7 +12,10 @@ import (
 //
 // 值得注意的是，attachBucket 是内部实现细节，
 // 任何外部调用不应也不得调用此函数。
-// 除此外，attachBucket 也不会进行权限检查。
+//
+// 除此外，attachBucket 也不会进行权限检查，
+// 也不确保一切操作是线程安全的，
+// 这意味着锁操作需要由调用者控制。
 //
 // flag 指示操作类型，只可能为下列之一。
 //   - 只读 (0)
@@ -73,6 +76,14 @@ func (b *Bucket) PathString() string {
 
 // StillAlive 检查当前存储桶是否仍然在数据库中有效
 func (b *Bucket) StillAlive() bool {
+	b.locker.RLock()
+	defer b.locker.RUnlock()
+	return b.stillAlive()
+}
+
+// StillAlive 检查当前存储桶是否仍然在数据库中有效。
+// 它是不设有线程安全保护的内部实现细节
+func (b *Bucket) stillAlive() bool {
 	if b.db == nil || *b.db == nil {
 		return false
 	}
@@ -97,6 +108,9 @@ func (b *Bucket) StillAlive() bool {
 // 或当前存储桶不具备读权限，
 // 则永远返回非 nil 的空切片
 func (b *Bucket) GetKeyMapping() (mapping [][]byte) {
+	b.locker.RLock()
+	defer b.locker.RUnlock()
+
 	mapping = make([][]byte, 0)
 
 	if len(b.path) == 1 || b.permission&BucketPermissionReadOnly == 0 {
@@ -122,6 +136,9 @@ func (b *Bucket) GetKeyMapping() (mapping [][]byte) {
 // 或当前存储桶不具备读权限，
 // 则永远返回非 nil 的空切片
 func (b *Bucket) GetBucketMapping() (mapping [][]byte) {
+	b.locker.RLock()
+	defer b.locker.RUnlock()
+
 	mapping = make([][]byte, 0)
 
 	if b.db == nil || *b.db == nil || b.permission&BucketPermissionReadOnly == 0 {
@@ -157,9 +174,13 @@ func (b *Bucket) GetBucketMapping() (mapping [][]byte) {
 // 或当前存储桶不具备读权限，
 // 亦会永远返回假
 func (b *Bucket) HasKey(name []byte) (has bool) {
+	b.locker.RLock()
+	defer b.locker.RUnlock()
+
 	if len(b.path) == 1 || b.permission&BucketPermissionReadOnly == 0 {
 		return false
 	}
+
 	_ = b.attachBucket(
 		"HasKey",
 		func(b *bbolt.Bucket) error {
@@ -177,6 +198,9 @@ func (b *Bucket) HasKey(name []byte) (has bool) {
 // 或当前存储桶不具备读权限，
 // 则永远返回假
 func (b *Bucket) HasBucket(name []byte) (has bool) {
+	b.locker.RLock()
+	defer b.locker.RUnlock()
+
 	if b.db == nil || *b.db == nil || b.permission&BucketPermissionReadOnly == 0 {
 		return
 	}
@@ -205,6 +229,9 @@ func (b *Bucket) HasBucket(name []byte) (has bool) {
 // 如果名为 name 的存储桶已经存在，
 // 则亦不会返回错误
 func (b *Bucket) CreateBucket(name []byte) error {
+	b.locker.Lock()
+	defer b.locker.Unlock()
+
 	if b.db == nil || *b.db == nil {
 		return fmt.Errorf("CreateBucket: use of closed upstream database")
 	}
@@ -227,20 +254,20 @@ func (b *Bucket) CreateBucket(name []byte) error {
 		return nil
 	}
 
-	if !b.HasBucket(name) {
-		return b.attachBucket(
-			"CreateBucket",
-			func(b *bbolt.Bucket) error {
-				_, err := b.CreateBucket(name)
-				if err != nil {
-					return fmt.Errorf("CreateBucket: %v", err)
-				}
+	return b.attachBucket(
+		"CreateBucket",
+		func(b *bbolt.Bucket) error {
+			if b.Bucket(name) != nil {
 				return nil
-			},
-			DatabaseFlagReadWrite,
-		)
-	}
-	return nil
+			}
+			_, err := b.CreateBucket(name)
+			if err != nil {
+				return fmt.Errorf("CreateBucket: %v", err)
+			}
+			return nil
+		},
+		DatabaseFlagReadWrite,
+	)
 }
 
 // 删除名为 name 的存储桶。
@@ -248,6 +275,9 @@ func (b *Bucket) CreateBucket(name []byte) error {
 // 如果名为 name 的存储桶不存在，
 // 则亦不会返回错误
 func (b *Bucket) DeleteBucket(name []byte) error {
+	b.locker.Lock()
+	defer b.locker.Unlock()
+
 	if b.db == nil || *b.db == nil {
 		return fmt.Errorf("DeleteBucket: use of closed upstream database")
 	}
@@ -272,6 +302,9 @@ func (b *Bucket) DeleteBucket(name []byte) error {
 	return b.attachBucket(
 		"DeleteBucket",
 		func(b *bbolt.Bucket) error {
+			if b.Bucket(name) == nil {
+				return nil
+			}
 			err := b.DeleteBucket(name)
 			if err != nil {
 				return fmt.Errorf("DeleteBucket: %v", err)
@@ -286,12 +319,17 @@ func (b *Bucket) DeleteBucket(name []byte) error {
 // 必须确保当前存储桶具有写权限。
 // 试图在根目录上调用此函数不会产生任何效果
 func (b *Bucket) PutData(key []byte, data []byte) error {
+	b.locker.Lock()
+	defer b.locker.Unlock()
+
 	if b.permission&BucketPermissionWriteOnly == 0 {
 		return fmt.Errorf("PutData: Permission denial")
 	}
+
 	if len(b.path) == 1 {
 		return nil
 	}
+
 	return b.attachBucket(
 		"PutData",
 		func(b *bbolt.Bucket) error {
@@ -309,12 +347,17 @@ func (b *Bucket) PutData(key []byte, data []byte) error {
 // 必须确保当前存储桶具有写权限。
 // 试图在根目录上调用此函数不会产生任何效果
 func (b *Bucket) DeleteData(key []byte) error {
+	b.locker.Lock()
+	defer b.locker.Unlock()
+
 	if b.permission&BucketPermissionWriteOnly == 0 {
 		return fmt.Errorf("PutData: Permission denial")
 	}
+
 	if len(b.path) == 1 {
 		return nil
 	}
+
 	return b.attachBucket(
 		"DeleteData",
 		func(b *bbolt.Bucket) error {
@@ -360,6 +403,7 @@ func (b *Bucket) GetSubBucketByName(name []byte, permission int) (result *Bucket
 		return nil
 	}
 	return &Bucket{
+		locker:     b.locker,
 		db:         b.db,
 		path:       append(b.path, name),
 		permission: permission & b.permission,
@@ -370,12 +414,17 @@ func (b *Bucket) GetSubBucketByName(name []byte, permission int) (result *Bucket
 // 必须确保当前存储桶具有读权限。
 // 试图在根目录上调用此函数不会产生任何效果
 func (b *Bucket) GetData(key []byte) (data []byte, err error) {
+	b.locker.RLock()
+	defer b.locker.RUnlock()
+
 	if b.permission&BucketPermissionReadOnly == 0 {
 		return nil, fmt.Errorf("GetData: Permission denial")
 	}
+
 	if len(b.path) == 1 {
 		return nil, nil
 	}
+
 	err = b.attachBucket(
 		"GetData",
 		func(b *bbolt.Bucket) error {
@@ -397,6 +446,9 @@ func (b *Bucket) GetData(key []byte) (data []byte, err error) {
 // 可以存在多个协程调用此函数，
 // 这不会对数据库造成错误的影响
 func (b *Bucket) CloseDatabase() error {
+	b.locker.Lock()
+	defer b.locker.Unlock()
+
 	if b.permission&BucketPermissionCloseDatabase == 0 {
 		return fmt.Errorf("CloseDatabase: Permission denial")
 	}
@@ -405,7 +457,7 @@ func (b *Bucket) CloseDatabase() error {
 		return nil
 	}
 
-	if !b.StillAlive() {
+	if !b.stillAlive() {
 		return fmt.Errorf("CloseDatabase: Current bucket is dead")
 	}
 
