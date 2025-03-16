@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	BotQQID = "3527679800"
+	BotQQID = "1492551697"
 )
 
 func startNapCat() {
