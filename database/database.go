@@ -32,3 +32,35 @@ func OpenOrCreateDatabase(path string) (
 		permission: BucketPermissionReadOnly | BucketPermissionWriteOnly | BucketPermissionCloseDatabase,
 	}, nil
 }
+
+// CloseDatabase 将数据库关闭。
+//
+// CloseDatabase 可以从任意具
+// 有关闭数据库权限的子桶上调用。
+//
+// 可以存在多个协程调用此函数，
+// 这不会对数据库造成错误的影响
+func CloseDatabase(database *Bucket) error {
+	database.locker.Lock()
+	defer database.locker.Unlock()
+
+	if database.permission&BucketPermissionCloseDatabase == 0 {
+		return fmt.Errorf("CloseDatabase: Permission denial")
+	}
+
+	if database.db == nil || *database.db == nil {
+		return nil
+	}
+
+	if !database.stillAlive() {
+		return fmt.Errorf("CloseDatabase: Current bucket is dead")
+	}
+
+	err := (*database.db).Close()
+	if err != nil {
+		return fmt.Errorf("CloseDatabase: %v", err)
+	}
+	*database.db = nil
+
+	return nil
+}
