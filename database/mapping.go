@@ -7,7 +7,7 @@ import "go.etcd.io/bbolt"
 // 或当前存储桶已经无效，
 // 或当前存储桶不具备读权限，
 // 则永远返回非 nil 的空切片
-func (b *Bucket) GetKeyMapping() (mapping [][]byte) {
+func (b *bucket) GetKeyMapping() (mapping [][]byte) {
 	b.locker.RLock()
 	defer b.locker.RUnlock()
 
@@ -35,7 +35,7 @@ func (b *Bucket) GetKeyMapping() (mapping [][]byte) {
 // 或数据库已被关闭，
 // 或当前存储桶不具备读权限，
 // 则永远返回非 nil 的空切片
-func (b *Bucket) GetBucketMapping() (mapping [][]byte) {
+func (b *bucket) GetBucketMapping() (mapping [][]byte) {
 	b.locker.RLock()
 	defer b.locker.RUnlock()
 
@@ -73,7 +73,7 @@ func (b *Bucket) GetBucketMapping() (mapping [][]byte) {
 // 或尝试在根目录上调用此函数，
 // 或当前存储桶不具备读权限，
 // 亦会永远返回假
-func (b *Bucket) HasKey(name []byte) (has bool) {
+func (b *bucket) HasKey(name []byte) (has bool) {
 	b.locker.RLock()
 	defer b.locker.RUnlock()
 
@@ -97,7 +97,7 @@ func (b *Bucket) HasKey(name []byte) (has bool) {
 // 或数据库已被关闭，
 // 或当前存储桶不具备读权限，
 // 则永远返回假
-func (b *Bucket) HasBucket(name []byte) (has bool) {
+func (b *bucket) HasBucket(name []byte) (has bool) {
 	b.locker.RLock()
 	defer b.locker.RUnlock()
 

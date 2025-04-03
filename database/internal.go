@@ -29,7 +29,7 @@ import (
 //
 // 如果一切正常，attachBucket 按原样返回
 // function 所返回的错误
-func (b *Bucket) attachBucket(callerName string, function func(*bbolt.Bucket) error, flag int) error {
+func (b *bucket) attachBucket(callerName string, function func(*bbolt.Bucket) error, flag int) error {
 	if b.db == nil || *b.db == nil {
 		return fmt.Errorf("%s: attachBucket: use of closed upstream database", callerName)
 	}
@@ -65,7 +65,7 @@ func (b *Bucket) attachBucket(callerName string, function func(*bbolt.Bucket) er
 
 // StillAlive 检查当前存储桶是否仍然在数据库中有效。
 // 它是不设有线程安全保护的内部实现细节
-func (b *Bucket) stillAlive() bool {
+func (b *bucket) stillAlive() bool {
 	if b.db == nil || *b.db == nil {
 		return false
 	}

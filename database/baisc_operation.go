@@ -10,7 +10,7 @@ import (
 // 必须确保当前存储桶具有写权限。
 // 如果名为 name 的存储桶已经存在，
 // 则亦不会返回错误
-func (b *Bucket) CreateBucket(name []byte) error {
+func (b *bucket) CreateBucket(name []byte) error {
 	b.locker.Lock()
 	defer b.locker.Unlock()
 
@@ -56,7 +56,7 @@ func (b *Bucket) CreateBucket(name []byte) error {
 // 必须确保当前存储桶具有写权限。
 // 如果名为 name 的存储桶不存在，
 // 则亦不会返回错误
-func (b *Bucket) DeleteBucket(name []byte) error {
+func (b *bucket) DeleteBucket(name []byte) error {
 	b.locker.Lock()
 	defer b.locker.Unlock()
 
@@ -121,25 +121,26 @@ func (b *Bucket) DeleteBucket(name []byte) error {
 // 那么最终所获子桶的权限也仍然是 3。
 //
 // 另外，在数据库根目录处亦可调用此函数
-func (b *Bucket) GetSubBucketByName(name []byte, permission int) (result *Bucket) {
+func (b *bucket) GetSubBucketByName(name []byte, permission int) (result *Bucket) {
 	if b.permission&BucketPermissionReadOnly == 0 {
 		return nil
 	}
 	if !b.HasBucket(name) {
 		return nil
 	}
-	return &Bucket{
+	bucket := &bucket{
 		locker:     b.locker,
 		db:         b.db,
 		path:       append(b.path, name),
 		permission: permission & b.permission,
 	}
+	return &Bucket{b: bucket}
 }
 
 // 向名为 key 的键处放置数据 data。
 // 必须确保当前存储桶具有写权限。
 // 试图在根目录上调用此函数不会产生任何效果
-func (b *Bucket) PutData(key []byte, data []byte) error {
+func (b *bucket) PutData(key []byte, data []byte) error {
 	b.locker.Lock()
 	defer b.locker.Unlock()
 
@@ -167,7 +168,7 @@ func (b *Bucket) PutData(key []byte, data []byte) error {
 // 删除名为 key 的键处所存放的数据。
 // 必须确保当前存储桶具有写权限。
 // 试图在根目录上调用此函数不会产生任何效果
-func (b *Bucket) DeleteData(key []byte) error {
+func (b *bucket) DeleteData(key []byte) error {
 	b.locker.Lock()
 	defer b.locker.Unlock()
 
@@ -195,7 +196,7 @@ func (b *Bucket) DeleteData(key []byte) error {
 // 从名为 key 的键处读取数据。
 // 必须确保当前存储桶具有读权限。
 // 试图在根目录上调用此函数不会产生任何效果
-func (b *Bucket) GetData(key []byte) (data []byte, err error) {
+func (b *bucket) GetData(key []byte) (data []byte, err error) {
 	b.locker.RLock()
 	defer b.locker.RUnlock()
 

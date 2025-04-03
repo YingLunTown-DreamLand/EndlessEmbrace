@@ -25,12 +25,13 @@ func OpenOrCreateDatabase(path string) (
 	if err != nil {
 		return nil, fmt.Errorf("OpenOrCreateDatabase: %v", err)
 	}
-	return &Bucket{
+	bucket := &bucket{
 		locker:     new(sync.RWMutex),
 		db:         &db,
 		path:       [][]byte{[]byte("root")},
 		permission: BucketPermissionReadOnly | BucketPermissionWriteOnly | BucketPermissionCloseDatabase,
-	}, nil
+	}
+	return &Bucket{b: bucket}, nil
 }
 
 // CloseDatabase 将数据库关闭。
@@ -41,26 +42,28 @@ func OpenOrCreateDatabase(path string) (
 // 可以存在多个协程调用此函数，
 // 这不会对数据库造成错误的影响
 func CloseDatabase(database *Bucket) error {
-	database.locker.Lock()
-	defer database.locker.Unlock()
+	db := database.b
 
-	if database.permission&BucketPermissionCloseDatabase == 0 {
+	db.locker.Lock()
+	defer db.locker.Unlock()
+
+	if db.permission&BucketPermissionCloseDatabase == 0 {
 		return fmt.Errorf("CloseDatabase: Permission denial")
 	}
 
-	if database.db == nil || *database.db == nil {
+	if db.db == nil || *db.db == nil {
 		return nil
 	}
 
-	if !database.stillAlive() {
+	if !db.stillAlive() {
 		return fmt.Errorf("CloseDatabase: Current bucket is dead")
 	}
 
-	err := (*database.db).Close()
+	err := (*db.db).Close()
 	if err != nil {
 		return fmt.Errorf("CloseDatabase: %v", err)
 	}
-	*database.db = nil
+	*db.db = nil
 
 	return nil
 }
