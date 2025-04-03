@@ -95,6 +95,8 @@ type BasicOperationHolder interface {
 	GetData(key []byte) (data []byte, err error)
 }
 
+// HighLevelOperationHolder 持有数据库的高级操作实现，
+// 例如直接访问和处理相应的存储桶或直接访问整个数据库
 type HighLevelOperationHolder interface {
 	// ViewBucketWithFunc 以只读模式检索当前存储桶。
 	// function 指示用于检索该存储桶的函数
